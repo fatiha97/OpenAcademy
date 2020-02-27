@@ -8,11 +8,13 @@ class Course(models.Model):
     _name = 'openacademy.course'
     _description = 'Openacademy Courses'
 
+    us=fields.Char(string="User",default=lambda self:self.env.user)
     name = fields.Char(string="Title", required=True)
     description = fields.Text()
     responsible_id = fields.Many2one('res.users',ondelete='set null', string="Responsible", index=True)
     session_ids = fields.One2many('openacademy.session','course_id', string="Sessions")
-    #pas bien compris
+
+
 
     def copy(self, default=None):
         default = dict(default or {})
@@ -54,13 +56,59 @@ class Session(models.Model):
                                     domain=['|', ('instructor', '=', True),
                                             ('category_id.name', 'ilike', "Teacher")])
 
-    course_id = fields.Many2one('openacademy.course',ondelete='cascade', string="Course", required=True)
+    course_id= fields.Many2one('openacademy.course',ondelete='cascade', string="Course", required=True)
     attendee_ids = fields.Many2many('res.partner', string="Attendees")
     taken_seats = fields.Float(string="Taken seats", compute='_taken_seats')
     end_date = fields.Date(string="End Date", store=True,
         compute='_get_end_date', inverse='_set_end_date')
     attendees_count = fields.Integer(
        string="Attendees count", compute='_get_attendees_count', store=True)
+    price_per_hour = fields.Integer(help="Price")
+    total = fields.Integer(help="total", compute='calc_total')
+    date = fields.Date(required=True, default=fields.Date.context_today)
+    state = fields.Selection([
+        ('brouillon', "BROUILLON"),
+        ('en_cours', "EN_COURS"),
+        ('valide', "VALIDE"),
+    ], default='brouillon', string='State')
+
+    # This function is triggered when the user clicks on the button 'Set to started'
+    def brouillon_progressbar(self):
+        self.write({
+            'state': 'brouillon'
+        })
+
+    def en_cours_progressbar(self):
+        self.write({
+            'state': 'en_cours'
+        })
+
+    def facturer(self):
+        data = {
+            'partner_id': self.instructor_id.id,
+            'type': 'in_invoice',
+            # 'partner_shipping_id' : self.instructor_id.address,
+            'invoice_date': self.date
+        }
+        invoice = self.env['account.move'].create(data)
+
+    # This function is triggered when the user clicks on the button 'Done'
+    def valide_progressbar(self):
+        self.write({
+            'state': 'valide',
+        })
+
+    def calc_total(self):
+        self.total = self.duration * self.price_per_hour
+
+    def action_draft(self):
+        self.state = 'draft'
+
+    def action_confirm(self):
+        self.state = 'confirmed'
+
+    def action_done(self):
+        self.state = 'done'
 
     @api.depends('seats', 'attendee_ids')
     def _taken_seats(self):

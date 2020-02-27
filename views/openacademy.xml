@@ -38,6 +38,7 @@
                 <tree string="Course Tree">
                     <field name="name"/>
                     <field name="responsible_id"/>
+                    <field name="us"/>
                 </tree>
             </field>
         </record>
@@ -111,6 +112,15 @@
             <field name="model">openacademy.session</field>
             <field name="arch" type="xml">
                 <form string="Session Form">
+                    <header>
+                        
+
+                        <button string="Facturer" class="oe_highlight" name="facturer" type="object" ></button>-->
+	                    <button string="Brouillon" type="object" name="brouillon_progressbar"  attrs="{'invisible': [('state', '=', 'valide')]}"/>
+	                    <button string="En cours" type="object" name="en_cours_progressbar"  attrs="{'invisible': [('state', '=', 'valide')]}"/>
+                        <button string="Valide" type="object" name="valide_progressbar"  attrs="{'invisible': [('state', '=', 'valide')]}" />
+                        <field name="state" widget="statusbar"/>
+                    </header>
                     <sheet>
                         <group>
                              <group string="General">
@@ -123,7 +133,10 @@
                                 <field name="start_date"/>
                                 <field name="duration"/>
                                 <field name="seats"/>
-                                 <field name="taken_seats" widget="progressbar"/>
+                                <field name="price_per_hour"/>
+                                <field name="total"/>
+                                <field name="date"/>
+                                <field name="taken_seats" widget="progressbar"/>
                             </group>
 
                         </group>
@@ -177,12 +190,12 @@
                 </gantt>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="session_list_action">
+      <record model="ir.actions.act_window" id="session_list_action">
             <field name="name">Sessions</field>
             <field name="res_model">openacademy.session</field>
             <field name="view_mode">tree,form,calendar,gantt,graph,kanban</field>
         </record>
-       <record model="ir.ui.view" id="wizard_form_view">
+      <record model="ir.ui.view" id="wizard_form_view">
             <field name="name">wizard.form</field>
             <field name="model">openacademy.wizard</field>
             <field name="arch" type="xml">
@@ -209,17 +222,30 @@
                     res_model="openacademy.wizard"
                     view_mode="form"
                     target="new"/>
-
-        <record model="ir.actions.act_window" id="course_list_action">
+      <record model="ir.actions.act_url" id="course_url_action">
+        <field name="name">url</field>
+        <field name="type">ir.actions.act_url</field>
+        <field name="url">https://odoo.com</field>
+        <field name="target">self</field>
+      </record>
+      <record model="ir.actions.act_window" id="course_list_action">
             <field name="name">Courses</field>
             <field name="res_model">openacademy.course</field>
             <field name="view_mode">tree,kanban,form</field>
-            <field name="context" eval="{'search_default_my_courses': 1}"/>
+        <!--  <field name="context" eval="{'search_default_my_courses': 1}"/>-->
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">Create the first course
                 </p>
             </field>
         </record>
+      <!-- test action server -->
+       <record model="ir.actions.server" id="action_server">
+         <field name="name">test server action</field>
+         <field name="model_id" ref="model_openacademy_course"/>
+         <field name="code">
+            raise Warning(record.name)
+          </field>
+       </record>
 
 
 
@@ -232,6 +258,9 @@
         <menuitem id="session_menu" name="Sessions"
                   parent="openacademy_menu"
                   action="session_list_action"/>
+         <menuitem id="url_menu" name="Learn odoo"
+                  parent="openacademy_menu"
+                  action="course_url_action"/>
 
 
 

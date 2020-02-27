@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="portal_my_home_menu_openacademy" name="Portal layout : openacademy sessions menu entries" inherit_id="portal.portal_breadcrumbs" priority="50">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'session' or session" t-attf-class="breadcrumb-item #{'active ' if not session else ''}">
+                <a t-if="session" t-attf-href="/my/sessions?{{ keep_query() }}">sessions</a>
+                <t t-else="">sessions</t>
+            </li>
+            <li t-if="session" class="breadcrumb-item active">
+                #<span t-field="session.id"/>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_openacademy_session" name="Portal My Home : openacademy session" inherit_id="portal.portal_my_home" priority="50">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-if="session_count" t-call="portal.portal_docs_entry">
+                <t t-set="title">sessions</t>
+                <t t-set="url" t-value="'/my/sessions'"/>
+                <t t-set="count" t-value="session_count"/>
+            </t>
+        </xpath>
+    </template>
+    <!--     **********  ********Lister************************      -->
+    <template id="portal_openacademy_session" name="openacademy session">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">sessions</t>
+            </t>
+            <div t-if="not sessions" class="alert alert-info">
+                There are currently no session for your account.
+            </div>
+            <t t-if="sessions" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th class="text-right">Name</th>
+                        <th class="w-100">Duration</th><th/>
+                        <th class="text-center">Seats</th>
+                    </tr>
+                </thead>
+                <t t-foreach="sessions" t-as="session">
+                    <tr>
+                        <td class="text-right"><a t-attf-href="/openacademy/session/#{session.id}"><small>#</small><t t-esc="session.name"/></a></td>
+                        <td><a t-attf-href="/openacademy/session/#{session.id}"><span t-field="session.duration"/></a></td><td/>
+                        <td class="text-center"><span class="badge badge-pill badge-info" t-field="session.seats"/></td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <!-- ************************ les infos************************** -->
+     <template id="sessions_followup" name="openacademy sessions">
+        <t t-call="portal.portal_layout">
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'"/>
+
+<!--            <t t-set="o_portal_fullwidth_alert" groups="openacademy.group_openacademy_user">-->
+<!--                <t t-call="portal.portal_back_in_edit_mode">-->
+<!--                    <t t-set="backend_url" t-value="'/web#model=openacademy.session&amp;id=%s&amp;view_type=form' % (session.id)"/>-->
+<!--                </t>-->
+<!--            </t>-->
+
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <h5 class="mb-1 mb-md-0">
+                                <span t-field="session.name"/>
+                                <small class="text-muted"> (#<span t-field="session.id"/>)</small>
+                            </h5>
+                        </div>
+                        <div class="col-md text-md-right">
+                            <small class="text-right">Status:</small>
+                            <span t-field="session.name" class=" badge badge-pill badge-info" title="Current stage of this session"/>
+                        </div>
+                    </div>
+                </t>
+                <t t-set="card_body">
+
+                    <div class="row mb-4">
+                        <strong class="col-lg-2">duration</strong>
+                        <span class="col-lg-10" t-field="session.duration" />
+                    </div>
+
+                    <div class="row mb-4">
+                        <strong class="col-lg-2"> seats</strong>
+                        <span class="col-lg-10" t-field="session.seats" />
+                    </div>
+
+                    <div class="row mb-4">
+                        <strong class="col-lg-2">active</strong>
+                        <span class="col-lg-10" t-field="session.active" />
+                    </div>
+
+
+                    <div class="row mb-4">
+                        <strong class="col-lg-2">attendees_count</strong>
+                        <span class="col-lg-10" t-field="session.attendees_count" />
+                    </div>
+                </t>
+            </t>
+        </t>
+     </template>
+</odoo>
