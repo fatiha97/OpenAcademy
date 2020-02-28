@@ -65,50 +65,47 @@ class Session(models.Model):
        string="Attendees count", compute='_get_attendees_count', store=True)
     price_per_hour = fields.Integer(help="Price")
     total = fields.Integer(help="total", compute='calc_total')
+    price_session = fields.Integer(string="Price for session")
     date = fields.Date(required=True, default=fields.Date.context_today)
     state = fields.Selection([
-        ('brouillon', "BROUILLON"),
-        ('en_cours', "EN_COURS"),
-        ('valide', "VALIDE"),
-    ], default='brouillon', string='State')
+        ('draft', "DRAFT"),
+        ('confirm', "CONFIRM"),
+        ('validate', "VALIDATE"),
+    ], default='draft', string='State')
+    button_clicked = fields.Boolean(string='Button clicked')
 
     # This function is triggered when the user clicks on the button 'Set to started'
-    def brouillon_progressbar(self):
-        self.write({
-            'state': 'brouillon'
-        })
 
-    def en_cours_progressbar(self):
+
+    def confirm_progressbar(self):
         self.write({
-            'state': 'en_cours'
+            'state': 'confirm'
         })
 
     def facturer(self):
+        self.button_clicked = True
+        #data= les donnes envoyes au facturaion
         data = {
             'partner_id': self.instructor_id.id,
             'type': 'in_invoice',
             # 'partner_shipping_id' : self.instructor_id.address,
-            'invoice_date': self.date
+            'invoice_date': self.date,
+            # 'amount_total_signed': self.total
         }
         invoice = self.env['account.move'].create(data)
+
+
+
 
     # This function is triggered when the user clicks on the button 'Done'
     def valide_progressbar(self):
         self.write({
-            'state': 'valide',
+            'state': 'validate',
         })
 
     def calc_total(self):
         self.total = self.duration * self.price_per_hour
 
-    def action_draft(self):
-        self.state = 'draft'
-
-    def action_confirm(self):
-        self.state = 'confirmed'
-
-    def action_done(self):
-        self.state = 'done'
 
     @api.depends('seats', 'attendee_ids')
     def _taken_seats(self):
@@ -157,13 +154,10 @@ class Session(models.Model):
                 # Compute the difference between dates, but: Friday - Monday = 4 days,
                 # so add one day to get 5 days instead
                 r.duration = (r.end_date - r.start_date).days + 1
-
-
     @api.depends('attendee_ids')
     def _get_attendees_count(self):
            for r in self:
                r.attendees_count = len(r.attendee_ids)
-
     @api.constrains('instructor_id', 'attendee_ids')
     def _check_instructor_not_in_attendees(self):
             for r in self:

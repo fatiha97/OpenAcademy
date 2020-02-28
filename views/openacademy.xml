@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
         <record model="ir.ui.view" id="course_form_view">
             <field name="name">course.form</field>
@@ -10,6 +11,7 @@
                             <field name="responsible_id"/>
                         </group>
                         <notebook>
+
                             <page string="Description">
                               <field name="description"/>
                             </page>
@@ -113,19 +115,18 @@
             <field name="arch" type="xml">
                 <form string="Session Form">
                     <header>
-                        
-
-                        <button string="Facturer" class="oe_highlight" name="facturer" type="object" ></button>-->
-	                    <button string="Brouillon" type="object" name="brouillon_progressbar"  attrs="{'invisible': [('state', '=', 'valide')]}"/>
-	                    <button string="En cours" type="object" name="en_cours_progressbar"  attrs="{'invisible': [('state', '=', 'valide')]}"/>
-                        <button string="Valide" type="object" name="valide_progressbar"  attrs="{'invisible': [('state', '=', 'valide')]}" />
+                        <button string="Facturer" class="oe_highlight" name="facturer" type="object" attrs="{'invisible': ['|',('button_clicked', '=', True), ('state', '!=', 'validate')]}"></button>
+                        <button string="CONFIRM" type="object" name="confirm_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('state', '=', 'validate'),('state', '=', 'confirm')]}"/>
+                        <button string="VALIDATE" type="object" name="valide_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('state', '=', 'draft'),('state', '=', 'validate')]}" />
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <group>
+                          <field name="button_clicked"></field>
                              <group string="General">
                                 <field name="course_id"/>
                                 <field name="name"/>
+                                 <field name="price_session"/>
                                 <field name="instructor_id"/>
                                  <field name="active"/>
                             </group>
@@ -138,8 +139,8 @@
                                 <field name="date"/>
                                 <field name="taken_seats" widget="progressbar"/>
                             </group>
-
                         </group>
+
                          <label for="attendee_ids"/>
                          <field name="attendee_ids"/>
                     </sheet>
@@ -165,8 +166,10 @@
                 <tree string="Session Tree" decoration-info="duration&lt;5" decoration-danger="duration&gt;15">
                     <field name="name"/>
                     <field name="course_id"/>
+                    <field name="price_session" sum="Total"/>
                     <field name="duration" invisible="1"/>
                     <field name="taken_seats" widget="progressbar"/>
+
                 </tree>
             </field>
         </record>
