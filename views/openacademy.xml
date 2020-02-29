@@ -40,7 +40,6 @@
                 <tree string="Course Tree">
                     <field name="name"/>
                     <field name="responsible_id"/>
-                    <field name="us"/>
                 </tree>
             </field>
         </record>
@@ -120,10 +119,16 @@
                         <button string="VALIDATE" type="object" name="valide_progressbar" class="oe_highlight"  attrs="{'invisible': ['|',('state', '=', 'draft'),('state', '=', 'validate')]}" />
                         <field name="state" widget="statusbar"/>
                     </header>
-                    <sheet>
+                   <sheet>
+                   <div class="oe_button_box" name="button_box">
+                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                            <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                    </div>
                         <group>
-                          <field name="button_clicked"></field>
+
                              <group string="General">
+                                  <field name="button_clicked"></field>
                                 <field name="course_id"/>
                                 <field name="name"/>
                                  <field name="price_session"/>
@@ -158,12 +163,14 @@
             </field>
         </record>
         <!-- session tree/list view -->
-        <record model="ir.ui.view" id="session_tree_view">
+      <record model="ir.ui.view" id="session_tree_view">
             <field name="name">session.tree</field>
             <field name="model">openacademy.session</field>
             <field name="arch" type="xml">
 
+
                 <tree string="Session Tree" decoration-info="duration&lt;5" decoration-danger="duration&gt;15">
+
                     <field name="name"/>
                     <field name="course_id"/>
                     <field name="price_session" sum="Total"/>
