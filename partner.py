@@ -18,23 +18,26 @@ class Partner(models.Model):
         # self.button_clicked = True
         # data= les donnes envoyes au facturaion
         data = {
-            # 'session_id': self.id,  # ???/????
             'partner_id': self.id,
             'type': 'out_invoice',
-            # 'invoice_line_ids': [],
-
+            # 'partner_shipping_id': self.instructor_id.address,
+            # 'invoice_date': self.date,
+            "invoice_line_ids": [],
         }
+        list=[]
+        for line in self.session_ids:
+          line1 = {
+            "name": line.name,
+            "price_unit": line.price_session,
 
-        # line = {
-        #     'product_id': self.id,
-        #     'name': "session",
-        #     'quantity': self.duration,
-        #     'price_unit': self.price_per_hour
-        # }
-        # data["invoice_line_ids"].append((0, 0, line))
-        # invoice = self.env['account.move'].create(data)
+         }
+          list.append(line1)
+        for element in list:
+         data["invoice_line_ids"].append((0, 0, element))
         invoice = self.env['account.move'].create(data)
 
+
+    # ********************************************************************
         invoices = self.mapped('invoice_ids')
         action = self.env.ref('account.action_move_out_invoice_type').read()[0]
         if len(invoices) > 1:

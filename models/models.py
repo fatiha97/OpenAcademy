@@ -63,7 +63,7 @@ class Session(models.Model):
         ('confirm', "CONFIRM"),
         ('validate', "VALIDATE"), ], default='draft', string='State')
     button_clicked = fields.Boolean(string='facturee')
-    invoice_ids = fields.One2many("account.move", "session_id")#session_id??????
+    invoice_ids = fields.One2many("account.move", "session_id")
     invoice_count = fields.Integer(string="count invoice", compute="_compute_invoice_count")
     # This function is triggered when the user clicks on the button 'Set to started'
 
@@ -106,7 +106,7 @@ class Session(models.Model):
         }
 
         line = {
-            "name": "session",
+            "name": self.name,
             "quantity": self.duration,
             "price_unit": self.price_per_hour,
 
