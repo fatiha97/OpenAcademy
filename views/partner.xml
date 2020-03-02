@@ -6,6 +6,11 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <div class="oe_button_box" name="button_box">
+                        <button  name="facturer" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+                         <field name="invoice_count" widget="statinfo" string="Invoices"/>
+                        </button>
+                </div>
                 <notebook position="inside">
                     <page string="Sessions">
                         <group>
@@ -27,7 +32,6 @@
         <menuitem id="contact_menu" name="Contacts"
                   parent="configuration_menu"
                   action="contact_list_action"/>
-
             <record model="ir.actions.act_window" id="contact_cat_list_action">
             <field name="name">Contact Tags</field>
             <field name="res_model">res.partner.category</field>
@@ -36,7 +40,6 @@
         <menuitem id="contact_cat_menu" name="Contact Tags"
                   parent="configuration_menu"
                   action="contact_cat_list_action"/>
-
         <record model="res.partner.category" id="teacher1">
             <field name="name">Teacher / Level 1</field>
         </record>

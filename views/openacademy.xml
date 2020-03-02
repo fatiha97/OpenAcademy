@@ -128,7 +128,7 @@
                         <group>
 
                              <group string="General">
-                                  <field name="button_clicked"></field>
+                                 <field name="button_clicked"></field>
                                 <field name="course_id"/>
                                 <field name="name"/>
                                  <field name="price_session"/>

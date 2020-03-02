@@ -61,16 +61,15 @@ class Session(models.Model):
     state = fields.Selection([
         ('draft', "DRAFT"),
         ('confirm', "CONFIRM"),
-        ('validate', "VALIDATE"),
-    ], default='draft', string='State')
+        ('validate', "VALIDATE"), ], default='draft', string='State')
     button_clicked = fields.Boolean(string='facturee')
-    invoice_ids = fields.One2many("account.move", "session_id")
+    invoice_ids = fields.One2many("account.move", "session_id")#session_id??????
     invoice_count = fields.Integer(string="count invoice", compute="_compute_invoice_count")
     # This function is triggered when the user clicks on the button 'Set to started'
 
     def _compute_invoice_count(self):
         self.invoice_count = self.env['account.move'].search_count([('session_id', '=', self.id)])
-
+# *************facture fournisseur=instructor***************************
     def action_view_invoice(self):
         invoices = self.mapped('invoice_ids')
         action = self.env.ref('account.action_move_out_invoice_type').read()[0]
@@ -92,27 +91,38 @@ class Session(models.Model):
 
         action['context'] = context
         return action
-    def confirm_progressbar(self):
-        self.write({
-            'state': 'confirm'
-        })
+    #********************** facture client*************************
 
     def facturer(self):
         self.button_clicked = True
         #data= les donnes envoyes au facturaion
         data = {
-            'session_id': self.id,#???/????
+            'session_id': self.id,
             'partner_id': self.instructor_id.id,
             'type': 'in_invoice',
-            # 'partner_shipping_id' : self.instructor_id.address,
+            # 'partner_shipping_id': self.instructor_id.address,
             'invoice_date': self.date,
+            "invoice_line_ids": [],
         }
+
+        line = {
+            "name": "session",
+            "quantity": self.duration,
+            "price_unit": self.price_per_hour,
+
+        }
+        data["invoice_line_ids"].append((0, 0, line))
         invoice = self.env['account.move'].create(data)
+
 
     # This function is triggered when the user clicks on the button 'Done'
     def valide_progressbar(self):
         self.write({
             'state': 'validate',
+        })
+    def confirm_progressbar(self):
+        self.write({
+            'state': 'confirm'
         })
     def calc_total(self):
         self.total = self.duration * self.price_per_hour
@@ -123,7 +133,6 @@ class Session(models.Model):
                 r.taken_seats = 0.0
             else:
                 r.taken_seats = 100.0 * len(r.attendee_ids) / r.seats
-
     @api.onchange('seats', 'attendee_ids')
     def _verify_valid_seats(self):
         if self.seats < 0:
@@ -142,7 +151,6 @@ class Session(models.Model):
 
                 },
             }
-
     @api.depends('start_date', 'duration')
     def _get_end_date(self):
             for r in self:
