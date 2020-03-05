@@ -6,6 +6,7 @@ from odoo import models, fields, api, exceptions, _
 
 class Course(models.Model):
     _name = 'openacademy.course'
+    _inherit = ['mail.thread']
     _description = 'Openacademy Courses'
 
     #user=fields.Char(string="User",default=lambda self:self.env.user)
@@ -14,6 +15,8 @@ class Course(models.Model):
     responsible_id = fields.Many2one('res.users',ondelete='set null', string="Responsible", index=True)
     session_ids = fields.One2many('openacademy.session','course_id', string="Sessions")
 
+    partner_id = fields.Many2one('res.partner', 'Responsible')
+    guest_ids = fields.Many2many('res.partner', 'Participants')
     def copy(self, default=None):
         default = dict(default or {})
         copied_count = self.search_count(
