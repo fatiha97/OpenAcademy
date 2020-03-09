@@ -14,8 +14,14 @@ class Course(models.Model):
     description = fields.Text()
     responsible_id = fields.Many2one('res.users',ondelete='set null', string="Responsible", index=True)
     session_ids = fields.One2many('openacademy.session','course_id', string="Sessions")
+<<<<<<< HEAD
     partner_id = fields.Many2one('res.partner', 'Responsible')
     guest_ids = fields.Many2many('res.partner', 'Participants') 
+=======
+
+    partner_id = fields.Many2one('res.partner', 'Responsible')
+    guest_ids = fields.Many2many('res.partner', 'Participants')
+>>>>>>> 19f904ec9661cbabf962cb9f29ce0763ecdb30e7
     def copy(self, default=None):
         default = dict(default or {})
         copied_count = self.search_count(

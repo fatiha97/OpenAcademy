@@ -39,7 +39,11 @@ class Partner(models.Model):
 
 
     # ********************************************************************
+<<<<<<< HEAD
     def action_invoice_view(self):
+=======
+    def action_view_invoice(self):
+>>>>>>> 19f904ec9661cbabf962cb9f29ce0763ecdb30e7
         invoices = self.mapped('invoice_ids')
         action = self.env.ref('account.action_move_out_invoice_type').read()[0]
         if len(invoices) > 1:

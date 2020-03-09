@@ -6,12 +6,22 @@
             <field name="model">res.partner</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+<<<<<<< HEAD
                <xpath expr="//div[hasclass('oe_button_box')]" position="before">
                     <button  name="facturer" type="object" class="oe_highlight" icon="fa-pencil-square-o" string="Facturer">
                         </button>
                 </xpath>
                   <div class="oe_button_box" name="button_box">
                         <button  name="action_invoice_view" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+=======
+            <xpath expr="//div[hasclass('oe_button_box')]" position="before">
+                    <button  name="facturer" type="object" class="oe_highlight" icon="fa-pencil-square-o" string="Facturer">
+                        </button>
+                </xpath>
+
+                <div class="oe_button_box" name="button_box">
+                        <button  name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o">
+>>>>>>> 19f904ec9661cbabf962cb9f29ce0763ecdb30e7
                          <field name="invoice_count" widget="statinfo" string="Invoices"/>
                         </button>
                 </div>
