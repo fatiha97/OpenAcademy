@@ -12,7 +12,7 @@ class Partner(models.Model):
 
 
 
-    def _compute_invoice_count(self):#?????
+    def _compute_invoice_count(self):
         self.invoice_count = self.env['account.move'].search_count([('partner_id', '=', self.id)])
     def facturer(self):
         # self.button_clicked = True
@@ -37,7 +37,9 @@ class Partner(models.Model):
         invoice = self.env['account.move'].create(data)
 
 
+
     # ********************************************************************
+    def action_invoice_view(self):
         invoices = self.mapped('invoice_ids')
         action = self.env.ref('account.action_move_out_invoice_type').read()[0]
         if len(invoices) > 1:
